@@ -16,10 +16,6 @@ from river import metrics
 #About the incremental learning model: it uses stochastic gradient descent https://riverml.xyz/dev/examples/batch-to-online/
 
 
-
-
-
-
 def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion):
     
 
@@ -29,23 +25,13 @@ def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
     # db = mongo['songreqs']
     # tasks = db["songs"]
 
-    #Once app, database are set up, song reqs will instead by the songs from the database
-
+    #this songreqs dict holds songs recommended by users as well as the amoutn of likes the song received normalized. Eventually this will be retrieved from the database
     #As it was, Lover, Pipe Down Drake, Stir Fry Migos
     songreqs = {"4Dvkj6JhhA12EX05fT7y2e":0.4, "1dGr1c8CrMLDpV6mPbImSI": 0.9, "11pEKMLmavDu8fxOB5QjbQ":0.75, "2UVbBKQOdFAekPTRsnkzcf":0.3} #holds the data about songs recomended from app
 
-
-    #Incremental Learning Logistic Regression Function
-   #This block below was just for testing purposes. Ignore it
-    # recommended = [{"id":"erjk","name":"song1", "artist":"artist1"}, {"id":"erjk","name":"song1", "artist":"artist1"}]
-    # s = json.dumps(recommended)
-    # res = requests.post("http://127.0.0.1:5000/song", json=s).json()
-    # # res = requests.get("http://127.0.0.1:5000/song", json=s).json()
-    # print(res)
-    # break
         
         
-        #getting unique spotify id for song
+    #getting unique spotify id for song
     try:
         query = f"track:\"{currSong}\" artist:\"{artist}\""
         results = sp.search(q=query, limit=1, type='track')
@@ -54,8 +40,6 @@ def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
         print(e)
         print("Song not found")
         return
-        
-    print(id)
         
     if id in songreqs:
         if opinion == 'y':
@@ -83,7 +67,6 @@ def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
     # entire dict and later you can make it more efficient by mainting an ordered dict and running from highest score to lowest)
     query = []
         
-        
     if learned>=3:
         for id in songreqs:
             if model.predict_one(songreqs[id]):
@@ -97,7 +80,7 @@ def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
     for song in result['tracks']:
         recommended.append({"name":song['name'], "artist":song['artists'][0]['name']})
         
-    return recommended
+    return recommended, learned
         
 
 if __name__ == "__main__":
@@ -113,7 +96,7 @@ if __name__ == "__main__":
         currSong = input("Enter song: ")
         artist = input("Enter artist: ")
         opinion = input("Is this song good? (y/n): ")
-        generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
+        recs, learned= generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
 
 
 

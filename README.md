@@ -2,20 +2,9 @@
 
 ## Description
 
-React app and Flask API for generating song recommendations during a party. This project is still being worked on and improved.
+Used an incremental learning logistic regression function and spotify API to recommend songs during a party
+Created an interactive DJ interface with React.js and Flask to receive recommendations and send feedback to continuously improve algorithm
 
-## Features
+## Next Steps
 
-- Feature 1
-- Feature 2
-- Feature 3
-
-## Installation
-
-1. Clone the repository.
-2. Install the dependencies using `npm install`.
-
-## Usage
-
-1. Run the application using `npm start`.
-2. Open your browser and navigate to `http://localhost:3000`.
+This project is still being worked on and improved. The next steps are to improve the React DJ interface, display the recommendations in a table, add automatic song detection (with Shazam API?)

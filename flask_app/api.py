@@ -28,9 +28,8 @@ data = [{"id":"ewkjrwlerj","name":"song1", "artist":"artist1"}]
 
 @app.route('/songRated', methods=['POST']) #it's going to be a post only
 def getRecs():
-    print(learned)
     data = request.get_json() #data posted is going to be currSongName, currArtist, opinion
-    recs = generateRecs(goodIDs, sp, model, metric, learned, data["currSong"], data["currArtist"], data["opinion"])
+    recs,learned = generateRecs(goodIDs, sp, model, metric, learned, data["currSong"], data["currArtist"], data["opinion"])
     print(recs)
     return recs
     
