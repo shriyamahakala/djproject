@@ -3,9 +3,11 @@ import './App.css';
 
 function App() {
 
+
+  const [learned, setLearned] = useState(0);
   const [inputs, setInputs] = useState({});
 
-  const [recs, setRecs] = useState("");
+  const [recs, setRecs] = useState([]);
 
   const handleSubmit = (event) => {
     // getData(inputs);
@@ -28,6 +30,7 @@ function App() {
 
 
   function getData(formData) {
+    
     const song = formData["song"];
     const artist = formData["artist"];
     const opinion = formData["opinion"];
@@ -38,10 +41,11 @@ function App() {
       headers: {
       'Content-Type' : 'application/json'
       },
-      body: JSON.stringify({"currSong": song, "currArtist": artist, "opinion": opinion})
+      body: JSON.stringify({"learned": learned, "currSong": song, "currArtist": artist, "opinion": opinion})
       }).then(res => res.json()).then(data => {
         console.log(data);
-        setRecs("Song: " + data[0]["name"] + " Artist: " + data[0]["artist"]);
+        setLearned(learned+1)
+        setRecs(data);
     });
 
   } 
@@ -65,7 +69,28 @@ function App() {
         </label>
         <button type="submit">Submit</button>
       </form>
-      {recs}
+      <table style={{width: '100%'}}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Artist</th>
+            <th>BPM</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            recs.map((obj) => {
+              return (
+                <tr>
+                  <td>{obj.name}</td>
+                  <td>{obj.artist}</td>
+                  <td>{obj.bpm}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
       </header>
     </div>
   );

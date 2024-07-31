@@ -15,6 +15,7 @@ from river import metrics
 
 #About the incremental learning model: it uses stochastic gradient descent https://riverml.xyz/dev/examples/batch-to-online/
 
+recommended = []
 
 def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion):
     
@@ -36,10 +37,11 @@ def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
         query = f"track:\"{currSong}\" artist:\"{artist}\""
         results = sp.search(q=query, limit=1, type='track')
         id = results['tracks']['items'][0]['id']
+        bpm = sp.audio_features(id)[0]["tempo"]
     except Exception as e:
         print(e)
         print("Song not found")
-        return
+        return None
         
     if id in songreqs:
         if opinion == 'y':
@@ -57,7 +59,7 @@ def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
             
         
     if opinion == 'n':
-        return 
+        return recommended
         
         
     goodIDs.append(id)
@@ -78,9 +80,11 @@ def generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
         
     recommended = []
     for song in result['tracks']:
-        recommended.append({"name":song['name'], "artist":song['artists'][0]['name']})
-        
-    return recommended, learned
+        recommended.append({"name":song['name'], "artist":song['artists'][0]['name'], "bpm": sp.audio_features(song['id'])[0]["tempo"]})
+    
+    
+    recommended = sorted(recommended, key=lambda x: abs(bpm - x['bpm']))
+    return recommended
         
 
 if __name__ == "__main__":
@@ -89,14 +93,16 @@ if __name__ == "__main__":
     metric = metrics.Accuracy()
     
     sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
-    learned = 0
+    learned=0
     goodIDs = [] #running list of all the ids deemed good by DJ
     #asyncio.run(main())
     while True:
         currSong = input("Enter song: ")
         artist = input("Enter artist: ")
         opinion = input("Is this song good? (y/n): ")
-        recs, learned= generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
+        recs= generateRecs(goodIDs, sp, model, metric, learned, currSong, artist, opinion)
+        print(recs)
+        learned+=1
 
 
 

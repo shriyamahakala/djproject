@@ -19,18 +19,17 @@ model = linear_model.LogisticRegression(optimizer)
 metric = metrics.Accuracy()
     
 sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
-learned = 0
+
 goodIDs = [] #running list of songs deemed good by DJ
 
 
 
-data = [{"id":"ewkjrwlerj","name":"song1", "artist":"artist1"}]
 
 @app.route('/songRated', methods=['POST']) #it's going to be a post only
 def getRecs():
     data = request.get_json() #data posted is going to be currSongName, currArtist, opinion
-    recs,learned = generateRecs(goodIDs, sp, model, metric, learned, data["currSong"], data["currArtist"], data["opinion"])
-    print(recs)
+    print(data)
+    recs = generateRecs(goodIDs, sp, model, metric, data["learned"], data["currSong"], data["currArtist"], data["opinion"])
     return recs
     
     
