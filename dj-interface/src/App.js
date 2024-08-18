@@ -18,8 +18,6 @@ function App() {
       opinion: ""
     });
     event.preventDefault();
-    
-    // alert(`The name you entered was: ${song}`)
   }
 
   const handleChange = (event) => {
@@ -49,6 +47,27 @@ function App() {
     });
 
   } 
+
+  function detectSong() { 
+    console.log("Detecting song");
+
+    fetch('/detectSong', {
+      method: "POST",
+      headers: {
+      'Content-Type' : 'application/json'
+      },
+      }).then(res => res.json()).then(data => {
+        console.log(data[0]);
+        setInputs({
+          song: data[0]["song"],
+          artist: data[0]["artist"],
+          opinion: ""
+        });
+        console.log("setInputs")
+    });
+    
+  }
+
   
   
   return (
@@ -77,18 +96,50 @@ function App() {
 
               <div className="w-full md:w-1/3 px-2 mb-4 md:mb-0">
                 <label className="block text-sm font-medium mb-1">
-                Opinion:
-                  <input type="text" value={inputs.opinion || ""} name="opinion" onChange={handleChange}
-                  className="w-full px-3 py-2 bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/> 
+                  Opinion:
                 </label>
+                <div className="flex items-center space-x-4">
+                  <label className="inline-flex items-center">
+                    <input 
+                      type="radio" 
+                      name="opinion" 
+                      value="yes" 
+                      checked={inputs.opinion === "yes"} 
+                      onChange={handleChange} 
+                      className="form-radio text-blue-600"
+                    />
+                    <span className="ml-2">Yes</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input 
+                      type="radio" 
+                      name="opinion" 
+                      value="no" 
+                      checked={inputs.opinion === "no"} 
+                      onChange={handleChange} 
+                      className="form-radio text-blue-600"
+                    />
+                    <span className="ml-2">No</span>
+                  </label>
+                </div>
               </div>
-            </div>
 
-            <div className="text-center">
-              <button type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-              >Submit</button>
             </div>
+            <div className="p-2 flex justify-center">
+              <div > 
+                <button type="button" onClick={detectSong}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                >Identify</button>
+              </div>
+
+              <div>
+                <button type="submit"
+                className="px-6 ml-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                >Submit</button>
+              </div>
+
+            </div>
+            
           </form>
           
           <div className="overflow-x-auto">

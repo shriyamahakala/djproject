@@ -6,6 +6,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import json
 import numpy as np
+from identify import detection
 
 from river import compose
 from river import linear_model
@@ -32,7 +33,11 @@ def getRecs():
     recs = generateRecs(goodIDs, sp, model, metric, data["learned"], data["currSong"], data["currArtist"], data["opinion"])
     return recs
     
-    
+@app.route('/detectSong', methods=['POST']) #it's going to be a post only
+def getSong():
+    song = detection()
+    return song
+
 
 
 #What this all does. You have a list of songs that have been recommended to the DJ. 
